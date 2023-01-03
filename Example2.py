@@ -7,7 +7,10 @@ from urllib.request import urlretrieve
 from diagrams.custom import Custom
 from diagrams.oci.monitoring import Workflow
 from diagrams.saas.identity import Okta
-from  diagrams.oci.database import DataflowApache
+from diagrams.oci.database import DataflowApache
+from diagrams.aws.compute import EKS
+from diagrams.k8s.ecosystem import Helm
+from diagrams.onprem.network import Internet
 
 with Diagram("Simple Web Service with DB Cluster", show=False):
     developers = Users("Dev")
@@ -20,10 +23,10 @@ with Diagram("Simple Web Service with DB Cluster", show=False):
 
     with Cluster("Agents pool"):
         agents = Ubuntu("agent01") - \
-        Edge(color="brown", style="dotted") \
-        - Ubuntu("agent02") - \
-        Edge(color="brown", style="dotted") \
-        - Ubuntu("agent03")
+                 Edge(color="brown", style="dotted") \
+                 - Ubuntu("agent02") - \
+                 Edge(color="brown", style="dotted") \
+                 - Ubuntu("agent03")
 
     with Cluster("Jenkins Main Node"):
         saml = Okta("SAML 2.0")
@@ -40,5 +43,20 @@ with Diagram("Simple Web Service with DB Cluster", show=False):
         promote = DataflowApache("promote")
         branch - maven >> Edge(color="darkgreen") >> promote
 
+    with Cluster("Deploy"):
+        eks = EKS('AWS EKS')
+        deploy = Internet("Deploy")
+        helm = Helm("K8s")
+        deploy >> eks
+        deploy >> helm
+
+    nexus_url = "https://github.com/buamod/DiagramAsCode/raw/main/assests/nexus.png"
+    nexus_icon = "nexus.png"
+    urlretrieve(nexus_url, nexus_icon)
+    nexus = Custom("Build", nexus_icon)
+
     access >> saml
-    developers >> stash >> jenkins >> agents >> Edge(color="darkorange") >> maven
+    promote >> deploy
+    nexus >> deploy
+    deploy >> nexus
+    developers >> stash >> jenkins >> agents >> Edge(color="darkorange") >> maven >> nexus
