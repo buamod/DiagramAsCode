@@ -24,9 +24,7 @@ with Diagram("Simple Web Service with DB Cluster", show=False):
     with Cluster("Agents pool"):
         agents = Ubuntu("agent01") - \
                  Edge(color="brown", style="dotted") \
-                 - Ubuntu("agent02") - \
-                 Edge(color="brown", style="dotted") \
-                 - Ubuntu("agent03")
+                 - Ubuntu("agent0N")
 
     with Cluster("Jenkins Main Node"):
         saml = Okta("SAML 2.0")
@@ -59,4 +57,5 @@ with Diagram("Simple Web Service with DB Cluster", show=False):
     promote >> deploy
     nexus >> deploy
     deploy >> nexus
-    developers >> stash >> jenkins >> agents >> Edge(color="darkorange") >> maven >> nexus
+    maven >> nexus
+    developers >> stash >> jenkins >> agents >> Edge(color="darkorange") >> branch
