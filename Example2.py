@@ -52,7 +52,9 @@ with Diagram("Simple Web Service with DB Cluster", show=False):
     nexus_icon = "nexus.png"
     urlretrieve(nexus_url, nexus_icon)
     nexus = Custom("Build", nexus_icon)
+    jenkinsRemote = Custom("jenkinsRemote", stash_icon)
 
+    jenkinsRemote - branch
     access >> saml
     promote >> deploy
     nexus >> deploy
