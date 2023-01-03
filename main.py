@@ -1,29 +1,18 @@
 from diagrams import Diagram, Cluster
 from diagrams.custom import Custom
+from diagrams.onprem.ci import Jenkins
 from urllib.request import urlretrieve
+from diagrams.onprem.client import Users
 
-with Diagram("Custom with remote icons", show=False, filename="custom_remote", direction="LR"):
+with Diagram("Custom with remote icons", show=True, filename="SecureDome", direction="LR"):
 
-  # download the icon image file
-  diagrams_url = "https://github.com/mingrammer/diagrams/raw/master/assets/img/diagrams.png"
-  diagrams_icon = "diagrams.png"
-  urlretrieve(diagrams_url, diagrams_icon)
+  with Cluster(" Secure Dome"):
+    Jenkins("Jenkins")
+    stash_url = "https://github.com/buamod/DiagramAsCode/raw/main/assests/stash.png"
+    stash_icon = "stash.png"
+    urlretrieve(stash_url, stash_icon)
+    stash = Custom("Elastic", stash_icon)
 
-  diagrams = Custom("Diagrams", diagrams_icon)
-
-  with Cluster("Some Providers"):
-
-    openstack_url = "https://github.com/mingrammer/diagrams/raw/master/resources/openstack/openstack.png"
-    openstack_icon = "openstack.png"
-    urlretrieve(openstack_url, openstack_icon)
-
-    openstack = Custom("OpenStack", openstack_icon)
-
-    elastic_url = "https://github.com/mingrammer/diagrams/raw/master/resources/elastic/saas/elastic.png"
-    elastic_icon = "elastic.png"
-    urlretrieve(elastic_url, elastic_icon)
-
-    elastic = Custom("Elastic", elastic_icon)
-
-  diagrams >> openstack
-  diagrams >> elastic
+  users = Users("Developers")
+  users >> stash
+  stash - Jenkins
